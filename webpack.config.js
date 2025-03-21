@@ -28,7 +28,10 @@ module.exports = () => {
         resolve: {
             extensions: ['.js', '.jsx', '.ts', '.tsx', '.css', '.scss', '.sass'],
             fallback: { process: false },
-            modules: [__dirname, 'node_modules']
+            modules: [__dirname, 'node_modules'],
+            alias: {
+                '@': path.resolve(__dirname, 'src')
+            }
         },
         devServer: {
             hot: true,
@@ -48,13 +51,13 @@ module.exports = () => {
                     use: ['style-loader', 'css-loader', 'sass-loader']
                 },
                 {
-                    test: /\.(png|jpe?g|gif|webp|ico)$/i,
-                    type: 'asset/resource'
-                },
-                {
                     test: /\.svg$/i,
                     issuer: /\.[jt]sx?$/,
                     use: ['@svgr/webpack']
+                },
+                {
+                    test: /\.(png|jpe?g|gif|webp|ico)$/i,
+                    type: 'asset/resource'
                 }
             ]
         },

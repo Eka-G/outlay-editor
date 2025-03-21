@@ -1,0 +1,27 @@
+.nav {
+  display: flex;
+  flex-direction: column;
+  &__item {
+    padding: 5px 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+    transition: background-color 0.2s ease;
+
+    &:not(&--active):hover {
+      background-color: var(--accent);
+    }
+
+    &--active {
+      background-color: var(--foreground-secondary);
+    }
+
+    span {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: calc(100% - 36px); // 22px (иконка) + 14px (gap)
+    }
+  }
+}

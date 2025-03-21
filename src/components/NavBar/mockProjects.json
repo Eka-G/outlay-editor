@@ -1,0 +1,47 @@
+{
+  "По проекту": {
+    "isActive": false
+  },
+  "Объекты": {
+    "isActive": false
+  },
+  "РД": {
+    "isActive": false
+  },
+  "МТО": {
+    "isActive": true
+  },
+  "График": {
+    "isActive": false
+  },
+  "МиМ": {
+    "isActive": false
+  },
+  "Рабочие": {
+    "isActive": false
+  },
+  "Капвложения": {
+    "isActive": false
+  },
+  "Бюджет": {
+    "isActive": false
+  },
+  "Финансирование": {
+    "isActive": false
+  },
+  "Панорамы": {
+    "isActive": false
+  },
+  "Камеры": {
+    "isActive": false
+  },
+  "Поручения": {
+    "isActive": false
+  },
+  "Контрагенты": {
+    "isActive": false
+  },
+  "КонтрагентыКонтрагентыКонтрагентыКонтрагентыКонтрагентыКонтрагенты": {
+    "isActive": false
+  }
+}

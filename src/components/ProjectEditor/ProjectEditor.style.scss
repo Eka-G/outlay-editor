@@ -1,0 +1,43 @@
+.project-editor {
+  display: grid;
+  grid-template: 44px 1fr / 234px 1fr;
+  flex: 1;
+
+  &__nav {
+    height: 100%;
+    border-right: 1px solid var(--accent);
+  }
+
+  &__cell {
+    border: 1px solid var(--accent);
+  }
+
+  &__projects {
+    padding: 8px 10px 8px 20px;
+    display: flex;
+    flex-direction: column;
+    color: var(--foreground-secondary);
+  }
+
+  &__selection {
+    position: relative;
+    padding: 2px 0;
+    background: url('@/assets/img/arrow.svg') no-repeat right 0 top 2px / 24px 24px;
+  }
+
+  &__current {
+    margin-left: -1px;
+    padding-left: 15px;
+  }
+
+  &__abbreviation {
+    font-size: 10px;
+  }
+
+  &__title {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+}

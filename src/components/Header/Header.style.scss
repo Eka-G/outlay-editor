@@ -1,0 +1,33 @@
+.header {
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  color: var(--foreground-secondary);
+
+  &__icons {
+    display: flex;
+    gap: 20px;
+  }
+
+  &__nav {
+    display: flex;
+    gap: 28px;
+  }
+
+  &__nav-item--active {
+    position: relative;
+    color: var(--foreground);
+
+    &::after {
+      position: absolute;
+      display: block;
+      content: '';
+      width: 100%;
+      height: 2px;
+      bottom: -14px;
+      left: 0;
+      background-color: var(--foreground);
+    }
+  }
+}
