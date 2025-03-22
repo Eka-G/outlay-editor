@@ -1,13 +1,11 @@
 import { ReactElement } from 'react';
-// import { useGetAllRowsQuery } from '@/api/outlayApi';
+import { useGetAllRowsQuery } from '@/api/outlayApi';
 import { OutlayTableRow } from '@/components';
-import { OutlayAllRowsResponse } from '@/shared/types';
 
 import './OutlayTable.style.scss';
 
 export default function OutlayTable() {
-  // const { data } = useGetAllRowsQuery();
-  const data: OutlayAllRowsResponse = [];
+  const { data } = useGetAllRowsQuery();
 
   const renderRows = () => {
     if (!data) {
