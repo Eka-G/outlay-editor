@@ -1,4 +1,4 @@
-.project-editor {
+.project-manager {
   display: grid;
   grid-template: 44px 1fr / 234px 1fr;
   flex: 1;
@@ -28,6 +28,8 @@
   &__current {
     margin-left: -1px;
     padding-left: 15px;
+    display: flex;
+    align-items: center;
   }
 
   &__abbreviation {
@@ -35,9 +37,14 @@
   }
 
   &__title {
+    padding-right: 15px;
+    display: flex;
+    align-items: center;
+    height: 100%;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 100%;
+    border-right: 1px solid var(--accent);
   }
 }

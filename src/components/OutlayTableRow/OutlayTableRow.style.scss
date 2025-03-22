@@ -1,0 +1,29 @@
+.row {
+  display: grid;
+  grid-template-columns: 110px 1fr repeat(4, 200px);
+
+  &:not(:last-child) {
+    border-bottom: 1px solid var(--accent);
+  }
+
+  &__cell {
+    padding: 21px 12px;
+  }
+  
+  &__cell--header {
+    padding: 12px;
+    color: var(--foreground-secondary);
+  }
+}
+
+@media (max-width: 1224px) {
+  .row {
+    grid-template-columns: 80px 1fr repeat(4, 120px);
+  }
+}
+
+@media (max-width: 768px) {
+  .row {
+    font-size: 12px;
+  }
+}
