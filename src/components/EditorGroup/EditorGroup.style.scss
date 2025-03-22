@@ -1,0 +1,28 @@
+.editor-group {
+  display: flex;
+  align-items: center;
+
+  &__button {
+    position: relative;
+    z-index: 10;
+  }
+
+  &__button--child::after,
+  &__button--child::before  {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: -8px;
+    width: 12px;
+    height: 1px;
+    background-color: var(--foreground);
+    z-index: 1;
+  }
+
+  &__button--child::before {
+    top: -38px;
+    width: 1px;
+    height: 52px;
+  }
+}

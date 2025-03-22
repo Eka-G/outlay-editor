@@ -9,5 +9,6 @@ export type RowCells = {
 export type RowProps = {
   level?: string;
   id?: number;
+  parentId?: number;
   rowCells?: RowCells;
 };

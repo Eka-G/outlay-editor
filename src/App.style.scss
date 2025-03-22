@@ -48,12 +48,29 @@ a {
   text-decoration: none;
 }
 
+button {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
 li {
   list-style: none;
 }
 
 select {
   width: 100%;
+  background: transparent;
+  border: none;
+  color: inherit;
+  appearance: none;
+
+  &:focus-visible {
+    outline: unset;
+  }
+}
+
+input {
   background: transparent;
   border: none;
   color: inherit;

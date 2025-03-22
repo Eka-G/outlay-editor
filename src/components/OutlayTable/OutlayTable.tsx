@@ -1,4 +1,3 @@
-import { ReactElement } from 'react';
 import { useGetAllRowsQuery } from '@/api/outlayApi';
 import { OutlayTableRow } from '@/components';
 
@@ -21,7 +20,7 @@ export default function OutlayTable() {
         estimatedProfit: row.estimatedProfit,
       };
 
-      const rows: ReactElement[] = [
+      const rows = [
         <OutlayTableRow
           key={row.id}
           level={level.toString()}

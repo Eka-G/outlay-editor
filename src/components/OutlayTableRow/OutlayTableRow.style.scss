@@ -1,10 +1,10 @@
-.row {
+.row:not(:last-child) {
+  border-bottom: 1px solid var(--accent);
+}
+
+.row-content {
   display: grid;
   grid-template-columns: 110px 1fr repeat(4, 200px);
-
-  &:not(:last-child) {
-    border-bottom: 1px solid var(--accent);
-  }
 
   &__cell {
     padding: 21px 12px;
