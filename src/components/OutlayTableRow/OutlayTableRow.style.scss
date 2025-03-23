@@ -1,18 +1,37 @@
-.row:not(:last-child) {
-  border-bottom: 1px solid var(--accent);
-}
-
-.row-content {
+.row {
   display: grid;
   grid-template-columns: 110px 1fr repeat(4, 200px);
 
   &__cell {
-    padding: 21px 12px;
+    margin: 12px;
+    cursor: pointer;
   }
   
   &__cell--header {
-    padding: 12px;
     color: var(--foreground-secondary);
+  }
+
+  &__input {
+    padding: 10px;
+    border: none;
+    background: none;
+    width: 100%;
+    
+    &:disabled {
+      cursor: default;
+      opacity: 1;
+      color: inherit;
+      pointer-events: none;
+    }
+    
+    &:focus,
+    &--editing {
+      border-radius: 6px;
+      color: var(--foreground-secondary);
+      background: var(--background-primary);
+      outline: 1px solid var(--accent);
+      pointer-events: auto;
+    }
   }
 }
 
