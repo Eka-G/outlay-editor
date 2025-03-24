@@ -30,9 +30,9 @@ export const outlayApi = createApi({
         body: row,
       }),
     }),
-    deleteRow: builder.mutation<OutlayRowResponse, OutlayRow>({
-      query: (row) => ({
-        url: `row/${row.id}/delete`,
+    deleteRow: builder.mutation<OutlayRowResponse, number>({
+      query: (id) => ({
+        url: `row/${id}/delete`,
         method: "DELETE",
       }),
     }),

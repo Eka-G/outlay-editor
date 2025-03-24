@@ -20,7 +20,6 @@ export default function OutlayTableRow({ rowCells }: RowProps) {
     return <OutlayTableRowHeader />;
   }
 
-  const [isEditing, setIsEditing] = useState(false);
   const {
     level,
     id,
@@ -38,6 +37,7 @@ export default function OutlayTableRow({ rowCells }: RowProps) {
     estimatedProfit: formatNumber(contentToRender.estimatedProfit),
   }
 
+  const [isEditing, setIsEditing] = useState(false);
   useEffect(() => {
     if (isEditing && formRef.current) {
       formRef.current.focus();
@@ -116,7 +116,9 @@ export default function OutlayTableRow({ rowCells }: RowProps) {
   return (
     <Formik
       initialValues={initialValues}
-      onSubmit={(values, { setSubmitting }) => handleSubmit(values, setSubmitting)}
+      onSubmit={(values, { setSubmitting }) =>
+        handleSubmit(values, setSubmitting)
+      }
     >
       {({
         values,
@@ -135,7 +137,12 @@ export default function OutlayTableRow({ rowCells }: RowProps) {
           onBlur={handleBlur}
           tabIndex={0}
         >
-          <EditorGroup key="editor-group" level={level} />
+          <EditorGroup
+            key="editor-group"
+            level={level}
+            id={id}
+            parentId={parentId}
+          />
           {renderCells()}
         </Form>
       )}

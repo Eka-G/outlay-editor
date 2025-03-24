@@ -2,13 +2,36 @@
   display: flex;
   align-items: center;
 
-  &__button {
+  &__container {
+    padding: 1px 4px 0 1px;
+    display: flex;
+    align-items: center;
+    height: min-content;
+    width: min-content;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      border-radius: 6px;
+      background-color: var(--accent);
+
+      .editor-group__delete-button {
+        opacity: 1;
+      }
+    }
+  }
+
+  &__delete-button {
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  &__create-button {
     position: relative;
     z-index: 10;
   }
 
-  &__button--child::after,
-  &__button--child::before  {
+  &__create-button--child::after,
+  &__create-button--child::before  {
     content: '';
     display: block;
     position: absolute;
@@ -20,7 +43,7 @@
     z-index: 1;
   }
 
-  &__button--child::before {
+  &__create-button--child::before {
     top: -40px;
     width: 1px;
     height: 54px;
