@@ -1,6 +1,7 @@
 import classnames from 'classnames';
+import { useState } from 'react';
 
-import { useDeleteRowMutation } from '@/api/outlayApi';
+import { useDeleteRowMutation, useAddEmptyRowMutation } from '@/api/outlayApi';
 import FileIcon from '@/assets/img/file.svg';
 import TrashIcon from "@/assets/img/trash.svg";
 
@@ -15,16 +16,45 @@ type EditorGroupProps = {
 const BASE_PADDING = 12;
 
 export default function EditorGroup({ level, id, parentId }: EditorGroupProps) {
-  const [ deleteRow ] = useDeleteRowMutation();
+  const [isLoading, setIsLoading] = useState(false);
+  const [deleteRow] = useDeleteRowMutation();
+  const [addEmptyRow] = useAddEmptyRowMutation();
   const offsetStyles = {
     marginLeft: `${BASE_PADDING * (1.5 * level + 1)}px`,
   };
 
-  const handleAddClick = () => {};
-  const handleDeleteClick = async () => {
+  const handleAddClick = async () => {
+    if (isLoading) {
+      return;
+    };
+    
+    setIsLoading(true);
+
     try {
-      await deleteRow(id);
-    } catch (error) {}
+      await addEmptyRow({ parentId: id }).unwrap();
+    } catch (error) {
+      // TODO: add notification
+      console.error('Failed to add row:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDeleteClick = async () => {
+    if (isLoading) {
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      await deleteRow(id).unwrap();
+    } catch (error) {
+      // TODO: add notification
+      console.error("Failed to delete row:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -37,8 +67,11 @@ export default function EditorGroup({ level, id, parentId }: EditorGroupProps) {
             "editor-group__create-button",
             {
               "editor-group__create-button--child": !!Number(level),
+              "editor-group__button--loading": isLoading
             }
           )}
+          onClick={handleAddClick}
+          disabled={isLoading}
         >
           <FileIcon />
         </button>
@@ -46,9 +79,13 @@ export default function EditorGroup({ level, id, parentId }: EditorGroupProps) {
           type="button"
           className={classnames(
             "editor-group__button",
-            "editor-group__delete-button"
+            "editor-group__delete-button",
+            {
+              "editor-group__button--loading": isLoading
+            }
           )}
           onClick={handleDeleteClick}
+          disabled={isLoading}
         >
           <TrashIcon />
         </button>

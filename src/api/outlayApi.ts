@@ -5,7 +5,9 @@ import type {
   OutlayAllRowsResponse,
   OutlayRowResponse,
   OutlayRowWithParentId,
+  OutlayRowWithChild,
 } from "@/shared/types";
+import { makeEmptyRow } from "./outlayApi.service";
 
 export const outlayApi = createApi({
   reducerPath: "outlayApi",
@@ -16,12 +18,90 @@ export const outlayApi = createApi({
     getAllRows: builder.query<OutlayAllRowsResponse, void>({
       query: () => "row/list",
     }),
+    addEmptyRow: builder.mutation<void, { parentId: number | null }>({
+      queryFn: () => ({ data: undefined }),
+      async onQueryStarted({ parentId }, { dispatch }) {
+        dispatch(
+          outlayApi.util.updateQueryData('getAllRows', undefined, (draft) => {
+            const emptyRow: OutlayRowWithChild = makeEmptyRow();
+
+            if (parentId === null) {
+              draft.push(emptyRow);
+
+              return draft;
+            }
+
+            const addRowToTree = (allRows: OutlayRowWithChild[]): OutlayRowWithChild[] => {
+              return allRows.map(rowFromStore => {
+                if (rowFromStore.id === parentId) {
+                  return {
+                    ...rowFromStore,
+                    child: [...(rowFromStore.child || []), emptyRow]
+                  };
+                }
+
+                if (rowFromStore.child && rowFromStore.child.length > 0) {
+                  return {
+                    ...rowFromStore,
+                    child: addRowToTree(rowFromStore.child as OutlayRowWithChild[])
+                  };
+                }
+
+                return rowFromStore;
+              });
+            };
+
+            return addRowToTree(draft);
+          })
+        );
+      }
+    }),
     createRow: builder.mutation<OutlayRowResponse, OutlayRowWithParentId>({
       query: (row) => ({
         url: "row/create",
         method: "POST",
         body: row,
       }),
+
+      async onQueryStarted(newRow, { dispatch, queryFulfilled }) {
+        try {
+          const { data: { current: currentResponceRow, changed: changedResponceRows } } = await queryFulfilled;
+
+          dispatch(
+          outlayApi.util.updateQueryData('getAllRows', undefined, (draft) => {
+            const addRowToTree = (allRows: OutlayRowWithChild[]): OutlayRowWithChild[] => {
+              if (!currentResponceRow || !newRow) {
+                return allRows;
+              }
+
+              return allRows.map(rowFromStore => {
+                const rowToUpdate = changedResponceRows.find((responceRow) => responceRow.id === rowFromStore.id);
+
+                if (rowFromStore.id === newRow.parentId) {
+                  return {
+                    ...rowFromStore,
+                    child: [...(rowFromStore.child || []), {...newRow, child: []}]
+                  } as OutlayRowWithChild;
+                }
+
+                if (rowToUpdate) {
+                  return {
+                    ...rowFromStore,
+                    ...rowToUpdate,
+                  };
+                }
+
+                return rowFromStore;
+              });
+            };
+
+            return addRowToTree(draft);
+          })
+        );
+        } catch {
+          //TODO: handle error
+        }
+      }
     }),
     updateRow: builder.mutation<OutlayRowResponse, OutlayRow>({
       query: (row) => ({
@@ -41,6 +121,7 @@ export const outlayApi = createApi({
 
 export const {
   useGetAllRowsQuery,
+  useAddEmptyRowMutation,
   useCreateRowMutation,
   useUpdateRowMutation,
   useDeleteRowMutation,

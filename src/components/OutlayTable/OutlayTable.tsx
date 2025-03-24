@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { useGetAllRowsQuery } from '@/api/outlayApi';
+import { useGetAllRowsQuery, useAddEmptyRowMutation } from '@/api/outlayApi';
 import { OutlayTableRow } from '@/components';
-
+import { OutlayRowWithChild } from '@/shared/types';
 import './OutlayTable.style.scss';
+import { makeRowCellsTemplate } from "./OutlayTable.service";
 
 export default function OutlayTable() {
   const [editingRowId, setEditingRowId] = useState<number | null>(null);
@@ -13,22 +14,14 @@ export default function OutlayTable() {
       return null;
     }
 
-    const processRow = (row: any, level: number = 0) => {
-      const rowCells = {
+    const processRow = (row: OutlayRowWithChild, level: number = 0, parentId: number | null = null) => {
+      const rowCells = makeRowCellsTemplate(
+        editingRowId,
+        setEditingRowId,
+        row,
         level,
-        id: row.id,
-        parentId: row.parentId,
-        total: row.total,
-        contentToRender: {
-          rowName: row.rowName,
-          salary: row.salary,
-          equipmentCosts: row.equipmentCosts,
-          overheads: row.overheads,
-          estimatedProfit: row.estimatedProfit,
-        },
-        editingRowIdInTable: editingRowId,
-        setEditingRowIdInTable: setEditingRowId,
-      };
+        parentId,
+      );
 
       const rows = [
         <li className="outlay-table__row">
@@ -38,7 +31,7 @@ export default function OutlayTable() {
 
       if (row.child && row.child.length > 0) {
         row.child.forEach((childRow: any) => {
-          rows.push(...processRow(childRow, level + 1));
+          rows.push(...processRow(childRow, level + 1, row.id));
         });
       }
 
@@ -46,7 +39,7 @@ export default function OutlayTable() {
     };
 
     return data.map((row) => processRow(row)).flat();
-  }; 
+  };
 
   return (
     <ul className="outlay-table">

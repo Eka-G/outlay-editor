@@ -20,7 +20,7 @@ export type OutlayRowWithParentId = OutlayRowBaseInfo & {
   parentId: number | null;
 };
 
-type OutlayRowWithChild = OutlayRow & {
+export type OutlayRowWithChild = OutlayRow & {
   child: OutlayRow[];
 };
 
