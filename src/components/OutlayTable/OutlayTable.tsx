@@ -18,6 +18,7 @@ export default function OutlayTable() {
         level,
         id: row.id,
         parentId: row.parentId,
+        total: row.total,
         contentToRender: {
           rowName: row.rowName,
           salary: row.salary,

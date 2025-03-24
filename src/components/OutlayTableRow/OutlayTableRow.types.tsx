@@ -1,18 +1,27 @@
-export type RowCells = {
-  level: number;
-  id: number;
-  parentId: number | null;
-  contentToRender: {
-    rowName: string;
-    salary: string | number;
-    equipmentCosts: string | number;
-    overheads: string | number;
-    estimatedProfit: string | number;
-  }
-  editingRowIdInTable: number | null;
-  setEditingRowIdInTable: (id: number | null) => void;
+export type FormValues = {
+  rowName: string;
+  salary: string;
+  equipmentCosts: string;
+  overheads: string;
+  estimatedProfit: string;
+};
+
+export type CellsToRender = {
+  rowName: string;
+  salary: number;
+  equipmentCosts: number;
+  overheads: number;
+  estimatedProfit: number;
 };
 
 export type RowProps = {
-  rowCells?: RowCells;
+  rowCells?: {
+    level: number;
+    id: number;
+    parentId: number | null;
+    total: number;
+    contentToRender: CellsToRender;
+    editingRowIdInTable: number | null;
+    setEditingRowIdInTable: (id: number | null) => void;
+  };
 };
