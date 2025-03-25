@@ -2,11 +2,11 @@ import { useState, useRef, useEffect } from 'react';
 import classnames from 'classnames';
 import { Formik, Field, Form } from 'formik';
 
-import { useUpdateRowMutation } from '@/api/outlayApi';
+import { useUpdateRowMutation, useCreateRowMutation } from '@/api/outlayApi';
 import EditorGroup from '@/components/EditorGroup';
 import NumberField from '@/components/NumberField/NumberField';
 import formatNumber from "@/shared/formatNumber";
-import { OUTLAY_ROW_TEMPLATE } from '@/shared/constants';
+import { OUTLAY_ROW_TEMPLATE, UNEXISTING_ROW_ID } from '@/shared/constants';
 
 import OutlayTableRowHeader from "./OutlayTableRowHeader";
 import { RowProps } from './OutlayTableRow.types';
@@ -14,7 +14,8 @@ import './OutlayTableRow.style.scss';
 
 export default function OutlayTableRow({ rowCells }: RowProps) {
   const formRef = useRef<HTMLFormElement>(null);
-  const [updateRow] = useUpdateRowMutation();
+  const [ updateRow ] = useUpdateRowMutation();
+  const [ createRow ] = useCreateRowMutation();
 
   if (!rowCells) {
     return <OutlayTableRowHeader />;
@@ -27,7 +28,9 @@ export default function OutlayTableRow({ rowCells }: RowProps) {
     parentId,
     contentToRender,
     editingRowIdInTable,
+    isCreatingNewRow,
     setEditingRowIdInTable,
+    setIsCreatingNewRow,
   } = rowCells;
   const initialValues = {
     rowName: contentToRender.rowName,
@@ -37,17 +40,25 @@ export default function OutlayTableRow({ rowCells }: RowProps) {
     estimatedProfit: formatNumber(contentToRender.estimatedProfit),
   }
 
-  const [isEditing, setIsEditing] = useState(false);
-  useEffect(() => {
-    if (isEditing && formRef.current) {
-      formRef.current.focus();
-    }
-  }, [isEditing]);
+  const [ isEditing, setIsEditing ] = useState(false);
+  const [ isCreatingEmptyRow ] = useState(rowCells.id === UNEXISTING_ROW_ID);
 
-  const handleDoubleClick = () => {
-    if (!editingRowIdInTable) {
+  useEffect(() => {
+    if ((isCreatingEmptyRow) && formRef.current) {
+      const firstInput = formRef.current.querySelector('input');
+      firstInput?.focus();
+    }
+  }, [isEditing, isCreatingEmptyRow]);
+
+  const handleDoubleClick = (e: React.MouseEvent) => {
+    if (!editingRowIdInTable && !isCreatingNewRow) {
+      const target = e.target as HTMLElement;
       setIsEditing(true);
       setEditingRowIdInTable(id);
+
+      if (target.tagName === "INPUT") {
+        target.focus();
+      };
     }
   };
 
@@ -57,8 +68,6 @@ export default function OutlayTableRow({ rowCells }: RowProps) {
   ) => {
     if (e.key === 'Escape') {
       handleSubmit();
-      setIsEditing(false);
-      setEditingRowIdInTable(null);
     }
   };
 
@@ -66,7 +75,7 @@ export default function OutlayTableRow({ rowCells }: RowProps) {
     return Object.entries(contentToRender).map(([key, value]) => {
       const isNumberField = typeof value === 'number';
       const fieldClasses = classnames("row__input", {
-        "row__input--editing": isEditing,
+        "row__input--editing": isEditing || isCreatingEmptyRow,
       });
 
       return (
@@ -76,14 +85,15 @@ export default function OutlayTableRow({ rowCells }: RowProps) {
               name={key}
               component={NumberField}
               className={fieldClasses}
-              disabled={!isEditing}
+              disabled={!isEditing && !isCreatingEmptyRow}
             />
           ) : (
             <Field
               name={key}
               type="text"
               className={fieldClasses}
-              disabled={!isEditing}
+              minLength={3}
+              disabled={!isEditing && !isCreatingEmptyRow}
             />
           )}
         </div>
@@ -101,10 +111,16 @@ export default function OutlayTableRow({ rowCells }: RowProps) {
         estimatedProfit: Number(values.estimatedProfit.replace(/\s+/g, '')),
       };
 
-      await updateRow({ ...OUTLAY_ROW_TEMPLATE, ...numericValues, id, total });
+      if (editingRowIdInTable) {
+        await updateRow({ ...OUTLAY_ROW_TEMPLATE, ...numericValues, id, total });
 
-      setIsEditing(false);
-      setEditingRowIdInTable(null);
+        setIsEditing(false);
+        setEditingRowIdInTable(null);
+      } else if (isCreatingNewRow) {
+        await createRow({ ...OUTLAY_ROW_TEMPLATE, ...numericValues, parentId });
+
+        setIsCreatingNewRow(false);
+      }
     } catch (error) {
       //TODO: add error handling
       console.error('Ошибка при обновлении строки:', error);
@@ -125,7 +141,7 @@ export default function OutlayTableRow({ rowCells }: RowProps) {
         errors,
         touched,
         handleChange,
-        handleBlur,
+        // handleBlur,
         handleSubmit,
         isSubmitting,
       }) => (
@@ -134,14 +150,15 @@ export default function OutlayTableRow({ rowCells }: RowProps) {
           className="row"
           onKeyDown={(e) => stopEditing(e, handleSubmit)}
           onDoubleClick={handleDoubleClick}
-          onBlur={handleBlur}
+          // onBlur={handleBlur}
           tabIndex={0}
         >
           <EditorGroup
             key="editor-group"
             level={level}
             id={id}
-            parentId={parentId}
+            isCreatingNewRow={isCreatingNewRow}
+            setIsCreatingNewRow={setIsCreatingNewRow}
           />
           {renderCells()}
         </Form>

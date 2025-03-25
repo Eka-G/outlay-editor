@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { API_ID } from "@/shared/constants";
+import { API_ID, UNEXISTING_ROW_ID } from "@/shared/constants";
 import type {
   OutlayRow,
   OutlayAllRowsResponse,
@@ -47,7 +47,7 @@ export const outlayApi = createApi({
                   };
                 }
 
-                return rowFromStore;
+                return {...rowFromStore};
               });
             };
 
@@ -80,7 +80,7 @@ export const outlayApi = createApi({
                 if (rowFromStore.id === newRow.parentId) {
                   return {
                     ...rowFromStore,
-                    child: [...(rowFromStore.child || []), {...newRow, child: []}]
+                    child: [...(rowFromStore.child?.filter((childRow) => childRow.id !== UNEXISTING_ROW_ID) || []), {...newRow, child: []}]
                   } as OutlayRowWithChild;
                 }
 
@@ -91,7 +91,7 @@ export const outlayApi = createApi({
                   };
                 }
 
-                return rowFromStore;
+                return {...rowFromStore};
               });
             };
 

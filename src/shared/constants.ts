@@ -1,5 +1,7 @@
 export const API_ID = 157753;
 
+export const UNEXISTING_ROW_ID = -1;
+
 export const OUTLAY_ROW_TEMPLATE = {
   equipmentCosts: 0,
   estimatedProfit: 0,
