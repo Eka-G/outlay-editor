@@ -7,8 +7,8 @@ import { makeRowCellsTemplate } from "./OutlayTable.service";
 
 export default function OutlayTable() {
   const { data } = useGetAllRowsQuery();
-  const [editingRowId, setEditingRowId] = useState<number | null>(null);
-  const [isCreatingNewRow, setIsCreatingNewRow] = useState<boolean>(false);
+  const [ editingRowId, setEditingRowId ] = useState<number | null>(null);
+  const [ isCreatingNewRow, setIsCreatingNewRow ] = useState<boolean>(false);
 
   const renderRows = () => {
     if (!data) {
@@ -46,7 +46,7 @@ export default function OutlayTable() {
 
   return (
     <ul className="outlay-table">
-      <li key="header" className="outlay-table__row">
+      <li key="table-header" className="outlay-table__row">
         <OutlayTableRow />
       </li>
 

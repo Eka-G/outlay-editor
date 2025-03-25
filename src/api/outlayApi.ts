@@ -115,6 +115,41 @@ export const outlayApi = createApi({
         url: `row/${id}/delete`,
         method: "DELETE",
       }),
+      async onQueryStarted(id, { dispatch, queryFulfilled }) {
+        try {
+          const { data: { changed: changedResponceRows } } = await queryFulfilled;
+
+          dispatch(
+            outlayApi.util.updateQueryData('getAllRows', undefined, (draft) => {
+              const deleteRowFromTree = (
+                allRows: OutlayRowWithChild[]
+              ): OutlayRowWithChild[] => {
+                return allRows
+                  .filter((row) => row.id !== id)
+                  .map((row) => {
+                    const rowToUpdate = changedResponceRows.find(
+                      (responceRow) => responceRow.id === row.id
+                    );
+                    if (rowToUpdate) {
+                      return {
+                        ...(rowToUpdate as OutlayRowWithChild),
+                        child: row.child
+                          ? deleteRowFromTree(row.child as OutlayRowWithChild[])
+                          : [],
+                      };
+                    }
+
+                    return { ...row };
+                  });
+              };
+
+              return deleteRowFromTree(draft);
+            })
+          );
+        } catch {
+          //TODO: handle error
+        }
+      }
     }),
   }),
 });
