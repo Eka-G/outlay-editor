@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useGetAllRowsQuery, useAddEmptyRowMutation } from '@/api/outlayApi';
 import { OutlayTableRow } from '@/components';
 import { OutlayRowWithChild } from '@/shared/types';
@@ -10,7 +10,7 @@ export default function OutlayTable() {
   const [ editingRowId, setEditingRowId ] = useState<number | null>(null);
   const [ isCreatingNewRow, setIsCreatingNewRow ] = useState<boolean>(false);
 
-  const renderRows = () => {
+  const renderRows = useCallback(() => {
     if (!data) {
       return null;
     }
@@ -42,7 +42,7 @@ export default function OutlayTable() {
     };
 
     return data.map((row) => processRow(row)).flat();
-  };
+  }, [data, editingRowId, isCreatingNewRow]);
 
   return (
     <ul className="outlay-table">

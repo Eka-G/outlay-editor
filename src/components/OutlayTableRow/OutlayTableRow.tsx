@@ -148,6 +148,7 @@ export default function OutlayTableRow({ rowCells }: RowProps) {
 
   return (
     <Formik
+      key={JSON.stringify(initialValues)}
       initialValues={initialValues}
       onSubmit={(values, { setSubmitting }) =>
         handleSubmit(values, setSubmitting)
@@ -161,7 +162,7 @@ export default function OutlayTableRow({ rowCells }: RowProps) {
         // handleBlur,
         handleSubmit,
         isSubmitting,
-        setSubmitting
+        setSubmitting,
       }) => (
         <Form
           ref={formRef}
