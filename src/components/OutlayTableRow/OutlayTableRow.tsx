@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import classnames from 'classnames';
 import { Formik, Field, Form } from 'formik';
+import { isEqual } from 'lodash';
 
 import { useUpdateRowMutation, useCreateRowMutation } from '@/api/outlayApi';
 import EditorGroup from '@/components/EditorGroup';
@@ -62,12 +63,23 @@ export default function OutlayTableRow({ rowCells }: RowProps) {
     }
   };
 
-  const stopEditing = (
+  const stopEditing = async (
     e: React.KeyboardEvent<HTMLFormElement>,
+    values: typeof initialValues,
     handleSubmit: (e?: React.FormEvent<HTMLFormElement>) => void
   ) => {
-    if (e.key === 'Escape') {
-      handleSubmit();
+    if (e.key === "Escape") {
+      const isRowChanged = !isEqual(initialValues, values);
+
+      if (isRowChanged) {
+        await handleSubmit();
+      } else {
+        setIsEditing(false);
+        setEditingRowIdInTable(null);
+        setIsCreatingNewRow(false);
+      }
+
+      return;
     }
   };
 
@@ -112,7 +124,12 @@ export default function OutlayTableRow({ rowCells }: RowProps) {
       };
 
       if (editingRowIdInTable) {
-        await updateRow({ ...OUTLAY_ROW_TEMPLATE, ...numericValues, id, total });
+        await updateRow({
+          ...OUTLAY_ROW_TEMPLATE,
+          ...numericValues,
+          id,
+          total,
+        });
 
         setIsEditing(false);
         setEditingRowIdInTable(null);
@@ -144,13 +161,13 @@ export default function OutlayTableRow({ rowCells }: RowProps) {
         // handleBlur,
         handleSubmit,
         isSubmitting,
+        setSubmitting
       }) => (
         <Form
           ref={formRef}
           className="row"
-          onKeyDown={(e) => stopEditing(e, handleSubmit)}
+          onKeyDown={(e) => stopEditing(e, values, handleSubmit)}
           onDoubleClick={handleDoubleClick}
-          // onBlur={handleBlur}
           tabIndex={0}
         >
           <EditorGroup

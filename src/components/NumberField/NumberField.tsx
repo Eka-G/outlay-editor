@@ -7,18 +7,21 @@ interface NumberFieldProps extends FieldProps {
   disabled?: boolean;
 }
 
-export default function NumberField({ field, form, ...props }: NumberFieldProps) {
+export default function NumberField({
+  field,
+  form,
+  ...props
+}: NumberFieldProps) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.replace(/\D/g, '');
-    form.setFieldValue(field.name, value);
+    const formattedValue = formatNumber(
+      Number(e.target.value.replace(/\D/g, ''))
+    );
+    form.setFieldValue(field.name, formattedValue);
   };
 
   const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-    const value = field.value;
-
-    if (value) {
-      const formattedValue = formatNumber(value);
-      form.setFieldValue(field.name, formattedValue);
+    if (field.value) {
+      form.setFieldValue(field.name, field.value);
     }
 
     field.onBlur(e);
@@ -28,7 +31,7 @@ export default function NumberField({ field, form, ...props }: NumberFieldProps)
     <input
       {...field}
       {...props}
-      value={field.value || ''}
+      value={formatNumber(Number(field.value.replace(/\D/g, ''))) || ''}
       onChange={handleChange}
       onBlur={handleBlur}
     />

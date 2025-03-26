@@ -70,7 +70,7 @@ export const outlayApi = createApi({
           dispatch(
           outlayApi.util.updateQueryData('getAllRows', undefined, (draft) => {
             const addRowToTree = (allRows: OutlayRowWithChild[]): OutlayRowWithChild[] => {
-              if (!currentResponceRow || !newRow) {
+              if (!currentResponceRow) {
                 return allRows;
               }
 
@@ -109,12 +109,56 @@ export const outlayApi = createApi({
         method: "POST",
         body: row,
       }),
+
+      async onQueryStarted(newRow, { dispatch, queryFulfilled }) {
+        try {
+          const { data: { current: currentResponceRow, changed: changedResponceRows } } = await queryFulfilled;
+
+          dispatch(
+            outlayApi.util.updateQueryData('getAllRows', undefined, (draft) => {
+              const updateRowTree = (
+                allRows: OutlayRowWithChild[]
+              ): OutlayRowWithChild[] => {
+                return allRows
+                  .map((row) => {
+                    if (row.id === currentResponceRow?.id) {
+                      return {
+                        ...row,
+                        ...currentResponceRow,
+                      } as OutlayRowWithChild;
+                    }
+
+                    const rowToUpdate = changedResponceRows.find(
+                      (responceRow) => responceRow.id === row.id
+                    );
+
+                    if (rowToUpdate) {
+                      return {
+                        ...(rowToUpdate as OutlayRowWithChild),
+                        child: row.child
+                          ? updateRowTree(row.child as OutlayRowWithChild[])
+                          : [],
+                      };
+                    }
+
+                    return { ...row };
+                  });
+              };
+
+              return updateRowTree(draft);
+            })
+          );
+        } catch {
+          //TODO: handle error
+        }
+      }
     }),
     deleteRow: builder.mutation<OutlayRowResponse, number>({
       query: (id) => ({
         url: `row/${id}/delete`,
         method: "DELETE",
       }),
+
       async onQueryStarted(id, { dispatch, queryFulfilled }) {
         try {
           const { data: { changed: changedResponceRows } } = await queryFulfilled;
