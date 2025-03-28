@@ -80,7 +80,12 @@ export const outlayApi = createApi({
                 if (rowFromStore.id === newRow.parentId) {
                   return {
                     ...rowFromStore,
-                    child: [...(rowFromStore.child?.filter((childRow) => childRow.id !== UNEXISTING_ROW_ID) || []), {...newRow, child: []}]
+                    child: [
+                      ...(rowFromStore.child?.filter(
+                        (childRow) => childRow.id !== UNEXISTING_ROW_ID
+                      ) || []),
+                      { ...currentResponceRow, child: [] },
+                    ],
                   } as OutlayRowWithChild;
                 }
 
@@ -135,7 +140,7 @@ export const outlayApi = createApi({
                     if (rowToUpdate) {
                       return {
                         ...(rowToUpdate as OutlayRowWithChild),
-                        child: row.child
+                        child: row.child?.length
                           ? updateRowTree(row.child as OutlayRowWithChild[])
                           : [],
                       };
@@ -177,7 +182,7 @@ export const outlayApi = createApi({
                     if (rowToUpdate) {
                       return {
                         ...(rowToUpdate as OutlayRowWithChild),
-                        child: row.child
+                        child: row.child?.length
                           ? deleteRowFromTree(row.child as OutlayRowWithChild[])
                           : [],
                       };

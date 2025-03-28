@@ -154,16 +154,7 @@ export default function OutlayTableRow({ rowCells }: RowProps) {
         handleSubmit(values, setSubmitting)
       }
     >
-      {({
-        values,
-        errors,
-        touched,
-        handleChange,
-        // handleBlur,
-        handleSubmit,
-        isSubmitting,
-        setSubmitting,
-      }) => (
+      {({ values, handleSubmit }) => (
         <Form
           ref={formRef}
           className="row"
