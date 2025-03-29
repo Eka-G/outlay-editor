@@ -22,8 +22,6 @@ export type RowProps = {
     total: number;
     contentToRender: CellsToRender;
     editingRowIdInTable: number | null;
-    isCreatingNewRow: boolean;
     setEditingRowIdInTable: (id: number | null) => void;
-    setIsCreatingNewRow: (isCreating: boolean) => void;
   };
 };

@@ -8,7 +8,6 @@ import { makeRowCellsTemplate } from "./OutlayTable.service";
 export default function OutlayTable() {
   const { data } = useGetAllRowsQuery();
   const [ editingRowId, setEditingRowId ] = useState<number | null>(null);
-  const [ isCreatingNewRow, setIsCreatingNewRow ] = useState<boolean>(false);
 
   const renderRows = useCallback(() => {
     if (!data) {
@@ -18,9 +17,7 @@ export default function OutlayTable() {
     const processRow = (row: OutlayRowWithChild, level: number = 0, parentId: number | null = null) => {
       const rowCells = makeRowCellsTemplate(
         editingRowId,
-        isCreatingNewRow,
         setEditingRowId,
-        setIsCreatingNewRow,
         row,
         level,
         parentId,
@@ -42,7 +39,7 @@ export default function OutlayTable() {
     };
 
     return data.map((row) => processRow(row)).flat();
-  }, [data, editingRowId, isCreatingNewRow]);
+  }, [ data, editingRowId ]);
 
   return (
     <ul className="outlay-table">

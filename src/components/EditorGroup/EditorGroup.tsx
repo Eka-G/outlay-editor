@@ -6,17 +6,23 @@ import FileIcon from '@/assets/img/file.svg';
 import TrashIcon from "@/assets/img/trash.svg";
 
 import './EditorGroup.style.scss';
+import { UNEXISTING_ROW_ID } from '@/shared/constants';
 
 type EditorGroupProps = {
   level: number;
   id: number;
-  isCreatingNewRow: boolean;
-  setIsCreatingNewRow: (isCreating: boolean) => void;
+  isTableEditing: boolean;
+  setEditingRowIdInTable: (id: number | null) => void;
 };
 
 const BASE_PADDING = 12;
 
-export default function EditorGroup({ level, id, isCreatingNewRow, setIsCreatingNewRow }: EditorGroupProps) {
+export default function EditorGroup({
+  level,
+  id,
+  isTableEditing,
+  setEditingRowIdInTable,
+}: EditorGroupProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [ deleteRow ] = useDeleteRowMutation();
   const [ addEmptyRow ] = useAddEmptyRowMutation();
@@ -33,7 +39,7 @@ export default function EditorGroup({ level, id, isCreatingNewRow, setIsCreating
 
     try {
       await addEmptyRow({ parentId: id }).unwrap();
-      setIsCreatingNewRow(true);
+      setEditingRowIdInTable(UNEXISTING_ROW_ID);
     } catch (error) {
       // TODO: add notification
       console.error('Failed to add row:', error);
@@ -43,7 +49,7 @@ export default function EditorGroup({ level, id, isCreatingNewRow, setIsCreating
   };
 
   const handleDeleteClick = async () => {
-    if (isLoading || isCreatingNewRow) {
+    if (isLoading || isTableEditing) {
       return;
     }
 
@@ -69,11 +75,11 @@ export default function EditorGroup({ level, id, isCreatingNewRow, setIsCreating
             "editor-group__create-button",
             {
               "editor-group__create-button--child": !!Number(level),
-              "editor-group__button--loading": isLoading
+              "editor-group__button--loading": isLoading,
             }
           )}
           onClick={handleAddClick}
-          disabled={isLoading}
+          disabled={isLoading || isTableEditing}
         >
           <FileIcon />
         </button>
@@ -83,11 +89,11 @@ export default function EditorGroup({ level, id, isCreatingNewRow, setIsCreating
             "editor-group__button",
             "editor-group__delete-button",
             {
-              "editor-group__button--loading": isLoading
+              "editor-group__button--loading": isLoading,
             }
           )}
           onClick={handleDeleteClick}
-          disabled={isLoading}
+          disabled={isLoading || isTableEditing}
         >
           <TrashIcon />
         </button>

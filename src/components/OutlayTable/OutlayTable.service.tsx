@@ -3,9 +3,7 @@ import { OutlayRowWithChild } from "@/shared/types";
 
 export const makeRowCellsTemplate = (
   editingRowId: number | null,
-  isCreatingNewRow: boolean,
   setEditingRowId: React.Dispatch<React.SetStateAction<number | null>>,
-  setIsCreatingNewRow: React.Dispatch<React.SetStateAction<boolean>>,
   row?: OutlayRowWithChild,
   level?: number,
   parentId?: number | null
@@ -22,7 +20,5 @@ export const makeRowCellsTemplate = (
     estimatedProfit: row?.estimatedProfit ?? 0,
   },
   editingRowIdInTable: editingRowId,
-  isCreatingNewRow,
   setEditingRowIdInTable: setEditingRowId,
-  setIsCreatingNewRow,
 });

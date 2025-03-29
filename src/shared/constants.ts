@@ -10,7 +10,7 @@ export const OUTLAY_ROW_TEMPLATE = {
   mainCosts: 0,
   materials: 0,
   mimExploitation: 0,
-  overheads: 98,
+  overheads: 0,
   rowName: '',
   salary: 0,
   supportCosts: 0,
